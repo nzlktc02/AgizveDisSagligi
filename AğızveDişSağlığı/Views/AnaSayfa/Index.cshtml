@@ -1,0 +1,186 @@
+﻿@using Entity.Entities
+@model AğızveDişSağlığı.Models.ViewModels.AnaSayfaViewModel
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+    Layout = "~/Views/Shared/SolPartial.cshtml";
+}
+
+@section Styles {
+    <style>
+        .page-section {
+            padding: 32px 0 56px
+        }
+
+        .card-glass {
+            background: #ffffffee;
+            backdrop-filter: saturate(140%) blur(6px);
+            border: 1px solid rgba(236,72,153,.12);
+            border-radius: 20px;
+            box-shadow: 0 18px 48px rgba(236,72,153,.18);
+        }
+
+        .badge-soft {
+            background: #e2fbe2;
+            color: #15803d;
+            border-radius: 999px;
+            padding: .35rem .65rem;
+            font-weight: 600
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #d97706;
+            border-radius: 999px;
+            padding: .35rem .65rem;
+            font-weight: 600
+        }
+
+        .empty {
+            border: 1px dashed #f0d2df;
+            background: #fff7fb;
+            border-radius: .85rem;
+            padding: 1rem 1.25rem
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #f1f5f9;
+            font-weight: 600;
+            color: #475569
+        }
+
+        .section-title {
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .data-type-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+        }
+    </style>
+}
+
+<!-- GÜNÜN ÖNERİSİ (varsa) -->
+@if (!string.IsNullOrWhiteSpace(Model.GununOnerisi))
+{
+    <div class="card card-glass p-4 p-lg-5 mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <div class="fs-3"></div>
+            <div>
+                <h5 class="mb-2">Günün Önerisi</h5>
+                <p class="mb-0 text-secondary">@Model.GununOnerisi</p>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- SON 7 GÜN ÖZETİ - DURUMLAR -->
+@if (Model.Durumlar != null && Model.Durumlar.Any())
+{
+    <div class="card card-glass p-4 p-lg-5 mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h5 class="mb-0">Son 7 Gün - Ağız & Diş Sağlığı Kayıtları</h5>
+            <span class="text-secondary small">@Model.Durumlar.Count() kayıt</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Saat</th>
+                        <th>Süre (dk)</th>
+                        <th>Uygulandı</th>
+                        <th>Açıklama</th>
+                        <th>Hedef</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model.Durumlar.OrderByDescending(x => x.Tarih))
+                    {
+                        <tr>
+                            <td>@d.Tarih.ToString("dd.MM.yyyy")</td>
+                            <td>@(d.Saat?.ToString(@"hh\:mm") ?? "-")</td>
+                            <td>@(d.Sure?.ToString() ?? "-")</td>
+                            <td>
+                                @if (d.Uygulandi)
+                                {
+                                    <span class="badge-soft">Evet</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Hayır</span>
+                                }
+                            </td>
+                            <td>@(d.DurumAciklama ?? "-")</td>
+                            <td>@(d.Hedef?.Baslik ?? "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- SON 7 GÜN ÖZETİ - HEALTH STATUSES -->
+@if (Model.HealthStatuses != null && Model.HealthStatuses.Any())
+{
+    <div class="card card-glass p-4 p-lg-5 mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h5 class="mb-0">Son 7 Gün - Genel Sağlık Kayıtları</h5>
+            <span class="text-secondary small">@Model.HealthStatuses.Count() kayıt</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Tarih</th>
+                        <th>Saat</th>
+                        <th>Süre (dk)</th>
+                        <th>Tamamlandı</th>
+                        <th>Açıklama</th>
+                        <th>Hedef</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.HealthStatuses.OrderByDescending(x => x.Date))
+                    {
+                        <tr>
+                            <td>@s.Date.ToString("dd.MM.yyyy")</td>
+                            <td>@(s.Time?.ToString(@"hh\:mm") ?? "-")</td>
+                            <td>@(s.Duration?.ToString() ?? "-")</td>
+                            <td>
+                                @if (s.IsCompleted)
+                                {
+                                    <span class="badge-soft">Evet</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Hayır</span>
+                                }
+                            </td>
+                            <td>@(s.Description ?? "-")</td>
+                            <td>@(s.HealthGoal?.Title ?? "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- VERİ YOKSA -->
+@if ((Model.Durumlar == null || !Model.Durumlar.Any()) && (Model.HealthStatuses == null || !Model.HealthStatuses.Any()))
+{
+    <div class="card card-glass p-4 p-lg-5">
+        <div class="empty text-center">
+            <div class="fs-1 mb-3"></div>
+            <h5 class="mb-2">Son 7 güne ait kayıt bulunamadı</h5>
+            <p class="text-secondary mb-0">Ağız & Diş Sağlığı veya Genel Sağlık sayfalarından ilk kaydını oluşturabilirsin.</p>
+        </div>
+    </div>
+}

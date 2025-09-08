@@ -1,0 +1,236 @@
+﻿@{
+    ViewData["Title"] = "Giriş Yap";
+}
+<style>
+    /* Arka plan (kayıt sayfasıyla aynı pembe gradyan) */
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg,#fff0f6 0%, #ffe0ec 18%, #fecdd3 42%, #f9a8d4 64%, #f472b6 82%, #ec4899 100%);
+        background-attachment: fixed;
+    }
+
+    /* Kart */
+    .login-shell {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 1rem;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 1100px;
+        border-radius: 1.25rem;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 24px 70px rgba(236,72,153,.28);
+    }
+
+    /* Sol bölüm – form */
+    .login-left {
+        padding: 2rem;
+    }
+
+    .auth-title {
+        font-weight: 800;
+        letter-spacing: .4px;
+    }
+
+    .form-control {
+        border: 0;
+        border-bottom: 2px solid #e5e7eb;
+        border-radius: 0;
+        box-shadow: none !important;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+        .form-control:focus {
+            border-color: #ec4899;
+        }
+
+    .btn-pill {
+        border-radius: 999px;
+        padding: .8rem 1.25rem;
+    }
+
+    /* Sağ bölüm – karşılama/CTA */
+    .login-right {
+        position: relative;
+        background: radial-gradient(1200px 600px at 40% 0%, #fecdd3 0%, #f472b6 40%, #ec4899 80%);
+        color: #fff;
+    }
+
+    .right-inner {
+        position: relative;
+        z-index: 2;
+        padding: 2rem 2.25rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .right-badge {
+        display: inline-block;
+        background: rgba(255,255,255,.18);
+        border: 1px solid rgba(255,255,255,.35);
+        color: #fff;
+        padding: .3rem .7rem;
+        border-radius: .75rem;
+        font-size: .85rem;
+        letter-spacing: .4px;
+    }
+
+    .right-btn {
+        background: #fff;
+        color: #ec4899;
+        border: 0;
+    }
+
+        .right-btn:hover {
+            filter: brightness(.96);
+            color: #ec4899;
+        }
+
+    /* Diş ikonu (watermark) */
+    .tooth-ornament {
+        position: absolute;
+        right: -40px;
+        bottom: -40px;
+        width: 320px;
+        opacity: .12;
+        transform: rotate(-8deg);
+        filter: drop-shadow(0 10px 18px rgba(0,0,0,.12));
+        z-index: 1;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    /* Sosyal mini butonlar */
+    .sso .btn {
+        border-radius: .6rem;
+        padding: .45rem .65rem;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+    }
+
+        .sso .btn:hover {
+            background: #f8fafc;
+        }
+</style>
+
+<div class="login-shell">
+    <div class="login-card">
+        <div class="row g-0 align-items-stretch">
+            <!-- SOL: Giriş formu -->
+            <div class="col-12 col-lg-6 login-left">
+                <h1 class="h2 auth-title mb-3">Giriş Yap</h1>
+
+                @* Sunucu tarafı hata mesajları *@
+                @if (ViewBag.Error is string vbErr && !string.IsNullOrWhiteSpace(vbErr))
+                {
+                    <div class="alert alert-danger">@vbErr</div>
+                }
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach (var s in ViewData.ModelState.Values)
+                            {
+                                foreach (var e in s.Errors)
+                                {
+                                    <li>@e.ErrorMessage</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="Giris" asp-controller="Hesap" method="post" novalidate id="loginForm">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label">E-posta</label>
+                        <input name="mail" type="email" class="form-control" placeholder="ornek@mail.com" />
+                        <small id="eEmpty" class="text-danger d-none">E-posta alanı boş bırakılamaz.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Parola</label>
+                        <div class="input-group">
+                            <input id="pwd" name="sifre" type="password" class="form-control" placeholder="Parolanız" />
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePwd('pwd',this)">Göster</button>
+                        </div>
+                        <small id="pEmpty" class="text-danger d-none">Parola alanı boş bırakılamaz.</small>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <button class="btn btn-primary btn-pill" type="submit">Giriş</button>
+                        <a asp-controller="Hesap" asp-action="Kayit" class="btn btn-outline-secondary btn-pill">Kayıt Ol</a>
+                        <a asp-controller="Hesap" asp-action="ParolaHatirlat" class="ms-auto text-decoration-none">Parolamı Unuttum</a>
+                    </div>
+
+                    <div class="sso d-flex gap-2">
+                        <button type="button" class="btn" title="Google">
+                            <svg width="18" height="18" viewBox="0 0 533.5 544.3"><path fill="#4285F4" d="M533.5 278.4c0-18.5-1.5-37.1-4.6-55.1H272.1v104.3h147c-6.3 34.6-26.8 64-57.1 83.6v69.4h92.2c54.1-49.8 79.3-123.2 79.3-202.2z" /><path fill="#34A853" d="M272.1 544.3c77.3 0 142.3-25.6 189.7-69.6l-92.2-69.4c-25.6 17.2-58.5 27.2-97.5 27.2-74.8 0-138.1-50.5-160.8-118.3H16.6v74.3c47 93.2 143.7 155.8 255.5 155.8z" /><path fill="#FBBC05" d="M111.3 314.2c-9.4-27.9-9.4-58.1 0-86l.1-74.3H16.6c-39.1 78.1-39.1 171.1 0 249.2l94.7-88.9z" /><path fill="#EA4335" d="M272.1 106.7c41.9-.7 82.1 14.6 112.8 42.8l84.9-84.9C410.5-6.1 338.3-19.5 272.1-17.9 160.3-17.9 63.6 44.7 16.6 137.9l94.8 74.3c22.7-67.8 86-118.3 160.7-118.3z" /></svg>
+                        </button>
+                        <button type="button" class="btn" title="Facebook">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2"><path d="M22 12.06C22 6.48 17.52 2 11.94 2S1.88 6.48 1.88 12.06c0 5.02 3.66 9.18 8.44 9.96v-7.04H7.83v-2.92h2.49V9.41c0-2.46 1.47-3.82 3.72-3.82 1.08 0 2.21.19 2.21.19v2.43h-1.25c-1.23 0-1.61.76-1.61 1.54v1.85h2.74l-.44 2.92h-2.3V22c4.78-.78 8.44-4.94 8.44-9.94z" /></svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- SAĞ: Karşılama paneli -->
+            <div class="col-12 col-lg-6 login-right d-none d-lg-block">
+                <svg class="tooth-ornament" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M300 530c-25 0-35-50-52-104-9-28-23-44-43-44-20 0-36 16-47 49-18 53-29 99-51 99-37 0-79-137-79-259C28 145 108 70 205 70c40 0 75 16 105 35 30-19 65-35 105-35 97 0 177 75 177 200 0 122-42 259-79 259-22 0-33-46-51-99-11-33-27-49-47-49-20 0-34 16-43 44-17 54-27 104-52 104z"
+                          fill="#ffffff" />
+                </svg>
+
+                <div class="right-inner">
+                    <span class="right-badge">Ağız &amp; Diş Sağlığı</span>
+                    <h2 class="fw-bold mb-1">Merhaba, Değerli Üye!</h2>
+                    <p class="mb-3">Tüm özellikleri kullanmak için kişisel bilgilerinizle kaydolun veya giriş yapın.</p>
+                   @*  <a asp-controller="Hesap" asp-action="Kayit" class="btn right-btn btn-pill">Kayıt Ol</a> *@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePwd(id, btn){
+            const el = document.getElementById(id);
+            const isPwd = el.type === 'password';
+            el.type = isPwd ? 'text' : 'password';
+            btn.textContent = isPwd ? 'Gizle' : 'Göster';
+        }
+
+        // Basit istemci doğrulaması (boş alan uyarıları)
+        const form = document.getElementById('loginForm');
+        form?.addEventListener('submit', function(e){
+            let ok = true;
+            const mail = this.querySelector('input[name="mail"]');
+            const pwd  = this.querySelector('input[name="sifre"]');
+            const eErr = document.getElementById('eEmpty');
+            const pErr = document.getElementById('pEmpty');
+
+            if(!mail.value.trim()){
+                eErr.classList.remove('d-none'); ok = false;
+            } else { eErr.classList.add('d-none'); }
+
+            if(!pwd.value.trim()){
+                pErr.classList.remove('d-none'); ok = false;
+            } else { pErr.classList.add('d-none'); }
+
+            if(!ok) e.preventDefault();
+        });
+    </script>
+}

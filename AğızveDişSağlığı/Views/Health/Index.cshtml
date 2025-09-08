@@ -1,0 +1,271 @@
+﻿@using Entity.Entities
+@model AğızveDişSağlığı.Models.ViewModels.HealthIndexViewModel
+
+@{
+    ViewData["Title"] = "Genel Sağlık Takip";
+    Layout = "~/Views/Shared/SolPartial.cshtml";
+}
+
+@section Styles {
+    <style>
+        .page-section {
+            padding: 32px 0 56px
+        }
+
+        .card-glass {
+            background: #ffffffee;
+            backdrop-filter: saturate(140%) blur(6px);
+            border: 1px solid rgba(236,72,153,.12);
+            border-radius: 20px;
+            box-shadow: 0 18px 48px rgba(236,72,153,.18);
+        }
+
+        .badge-soft {
+            background: #e2fbe2;
+            color: #15803d;
+            border-radius: 999px;
+            padding: .35rem .65rem;
+            font-weight: 600
+        }
+
+        .empty {
+            border: 1px dashed #f0d2df;
+            background: #fff7fb;
+            border-radius: .85rem;
+            padding: 1rem 1.25rem
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #f1f5f9;
+            font-weight: 600;
+            color: #475569
+        }
+
+        .period-input-group {
+            position: relative;
+        }
+
+        .period-custom-input {
+            display: none;
+        }
+
+        .period-custom-input.show {
+            display: block;
+        }
+    </style>
+}
+
+<div class="page-section">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="h2 mb-4">Genel Sağlık Takip</h1>
+
+                <!-- Yeni Durum Girişi -->
+                <div class="card card-glass p-4 mb-4">
+                    <h5 class="mb-3">Yeni Durum Girişi</h5>
+                    <form asp-action="CreateStatus" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Hedef (opsiyonel)</label>
+                                <select asp-for="NewStatus.HealthGoalId" class="form-select">
+                                    <option value="">Hedef seç</option>
+                                    @if (Model?.Goals != null && Model.Goals.Any())
+                                    {
+                                        foreach (var goal in Model.Goals)
+                                        {
+                                            <option value="@goal.Id">@goal.Title</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Tarih</label>
+                                <input asp-for="NewStatus.Date" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="NewStatus.Date" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Saat</label>
+                                <input asp-for="NewStatus.Time" type="time" class="form-control" />
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Süre (dk)</label>
+                                <input asp-for="NewStatus.Duration" type="number" min="0" class="form-control" />
+                            </div>
+
+                            <div class="col-md-1 d-flex align-items-end">
+                                <div class="form-check">
+                                    <input asp-for="NewStatus.IsCompleted" class="form-check-input" type="checkbox" />
+                                    <label class="form-check-label">Tamamlandı</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-12">
+                                <label class="form-label">Açıklama (opsiyonel)</label>
+                                <textarea asp-for="NewStatus.Description" class="form-control" rows="2" placeholder="Durum açıklaması girin"></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">Durumu Kaydet</button>
+                    </form>
+                </div>
+
+                <!-- Yeni Hedef Oluşturma -->
+                <div class="card card-glass p-4 mb-4">
+                    <h5 class="mb-3">Yeni Hedef Oluştur</h5>
+                    <form asp-action="CreateGoal" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Hedef Başlığı</label>
+                                <input asp-for="NewGoal.Title" class="form-control" placeholder="Hedef başlığı girin" />
+                                <span asp-validation-for="NewGoal.Title" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Açıklama (opsiyonel)</label>
+                                <textarea asp-for="NewGoal.Description" class="form-control" rows="2" placeholder="Hedef açıklaması girin"></textarea>
+                                <span asp-validation-for="NewGoal.Description" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Periyot</label>
+                                <div class="period-input-group">
+                                    <select id="periodSelectHealth" class="form-select" onchange="togglePeriodInputHealth()">
+                                        <option value="">Seçiniz</option>
+                                        <option value="Günde bir">Günde bir</option>
+                                        <option value="Haftada bir">Haftada bir</option>
+                                        <option value="Ayda bir">Ayda bir</option>
+                                        <option value="Altı ayda bir">Altı ayda bir</option>
+                                        <option value="Yılda bir">Yılda bir</option>
+                                        <option value="custom">Manuel yazım</option>
+                                    </select>
+                                    <input id="periodCustomHealth" name="NewGoal.Period" type="text" class="form-control period-custom-input mt-2" placeholder="Özel periyot girin (örn: 3 günde bir)" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Önem Derecesi</label>
+                                <select asp-for="NewGoal.Importance" class="form-select">
+                                    <option value="Düşük">Düşük</option>
+                                    <option value="Orta" selected>Orta</option>
+                                    <option value="Yüksek">Yüksek</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success mt-3">Hedefi Kaydet</button>
+                    </form>
+                </div>
+
+                <!-- Hedef Listesi -->
+                <div class="card card-glass p-4">
+                    <h5 class="mb-3">Hedeflerim</h5>
+                    @if (Model?.Goals != null && Model.Goals.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Başlık</th>
+                                        <th>Açıklama</th>
+                                        <th>Periyot</th>
+                                        <th>Önem</th>
+                                        <th>Oluşturma</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var goal in Model.Goals)
+                                    {
+                                        <tr>
+                                            <td>@goal.Title</td>
+                                            <td>@(goal.Description ?? "-")</td>
+                                            <td>@goal.Period</td>
+                                            <td>
+                                                <span class="badge @(goal.Importance == "Yüksek" ? "bg-danger" : goal.Importance == "Orta" ? "bg-warning" : "bg-secondary")">
+                                                    @goal.Importance
+                                                </span>
+                                            </td>
+                                            <td>@goal.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="editGoal(@goal.Id)">Düzenle</button>
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteGoal(@goal.Id)">Sil</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty">
+                            <strong>Henüz hedef oluşturulmamış.</strong>
+                            <div class="text-secondary mt-1">Yukarıdaki formu kullanarak ilk hedefini oluşturabilirsin.</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePeriodInputHealth() {
+            const select = document.getElementById("periodSelectHealth");
+            const customInput = document.getElementById("periodCustomHealth");
+            
+            if (select.value === "custom") {
+                customInput.classList.add("show");
+                customInput.required = true;
+                customInput.focus();
+            } else {
+                customInput.classList.remove("show");
+                customInput.required = false;
+                customInput.value = "";
+            }
+        }
+
+        function editGoal(goalId) {
+            // Düzenleme işlemi için modal veya form açılabilir
+            alert("Düzenleme özelliği yakında eklenecek!");
+        }
+
+        function deleteGoal(goalId) {
+            if (confirm("Bu hedefi silmek istediğinizden emin misiniz?")) {
+                // Silme işlemi
+                fetch("/Health/DeleteGoal", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": document.querySelector("input[name=\"__RequestVerificationToken\"]").value
+                    },
+                    body: JSON.stringify({ goalId: goalId })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert("Hedef silinirken bir hata oluştu.");
+                    }
+                });
+            }
+        }
+    </script>
+}

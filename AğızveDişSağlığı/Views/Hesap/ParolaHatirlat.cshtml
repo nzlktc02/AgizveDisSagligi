@@ -1,0 +1,539 @@
+﻿@{
+    ViewData["Title"] = "Parola Hatırlatma";
+    bool showPasswordForm = ViewBag.ShowPasswordForm is bool b && b;
+    string mail = ViewBag.Mail as string ?? "";
+    string errorMsg = ViewBag.Error as string;
+    string successMsg = ViewBag.Success as string;
+}
+
+<style>
+    /* Sayfa arka planı */
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg,#fff0f6 0%, #ffe0ec 18%, #fecdd3 42%, #f9a8d4 64%, #f472b6 82%, #ec4899 100%);
+        background-attachment: fixed;
+    }
+
+    /* Kart ve yerleşim */
+    .auth-shell {
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 3rem 1rem;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 900px;
+        background: #ffffffee;
+        backdrop-filter: saturate(140%) blur(4px);
+        border-radius: 1.25rem;
+        box-shadow: 0 20px 60px rgba(236,72,153,.25);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Başlık + geri linki */
+    .auth-back {
+        display: inline-flex;
+        gap: .5rem;
+        align-items: center;
+        color: #64748b;
+        text-decoration: none;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .auth-back:hover {
+        color: #ec4899;
+        transform: translateX(-2px);
+    }
+
+    .auth-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+        color: #6b7280;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    /* Form stilleri */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #ffffff;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #ec4899;
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    /* Buton stilleri */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        min-width: 120px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+    }
+
+    .btn-link {
+        background: none;
+        color: #3b82f6;
+        text-decoration: underline;
+        padding: 0.75rem 1rem;
+        min-width: auto;
+        box-shadow: none;
+    }
+
+    .btn-link:hover {
+        color: #1d4ed8;
+        background: rgba(59, 130, 246, 0.1);
+        text-decoration: none;
+        border-radius: 0.5rem;
+    }
+
+    /* Buton grupları */
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .button-group .btn {
+        margin: 0.25rem;
+    }
+
+    /* Mesaj stilleri */
+    .alert {
+        padding: 1rem 1.25rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid;
+        font-weight: 500;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border-left-color: #dc2626;
+        color: #dc2626;
+        box-shadow: 0 4px 15px rgba(220, 38, 38, 0.1);
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-left-color: #16a34a;
+        color: #16a34a;
+        box-shadow: 0 4px 15px rgba(22, 163, 74, 0.1);
+    }
+
+    /* Parola kriterleri */
+    .password-criteria {
+        background: linear-gradient(135deg, #e7f3ff 0%, #dbeafe 100%);
+        border: 1px solid #b3d9ff;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #0066cc;
+        font-size: 0.95rem;
+        box-shadow: 0 2px 10px rgba(0, 102, 204, 0.1);
+    }
+
+    .password-criteria ul {
+        margin: 0.5rem 0 0 0;
+        padding-left: 1.2rem;
+    }
+
+    .password-criteria li {
+        margin-bottom: 0.5rem;
+        position: relative;
+    }
+
+    .password-criteria li:before {
+        content: "";
+        position: absolute;
+        left: -1.2rem;
+        color: #0066cc;
+        font-weight: bold;
+    }
+
+    /* Parola hata mesajları */
+    .password-errors {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        border: 1px solid #f5c6cb;
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        color: #721c24;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 8px rgba(114, 28, 36, 0.1);
+    }
+
+    .password-errors ul {
+        margin: 0;
+        padding-left: 1.2rem;
+    }
+
+    .password-errors li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* İpucu bölümü */
+    .tips-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .tips-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .tips-title:before {
+        content: "";
+        font-size: 1.5rem;
+    }
+
+    .tips-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .tips-list li {
+        padding: 0.75rem 0;
+        color: #6b7280;
+        position: relative;
+        padding-left: 2rem;
+        font-weight: 500;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .tips-list li:last-child {
+        border-bottom: none;
+    }
+
+    .tips-list li:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        font-size: 1.2rem;
+    }
+
+    /* Form container */
+    .form-container {
+        background: #ffffff;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #f1f5f9;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .auth-shell {
+            padding: 1rem;
+        }
+        
+        .auth-card {
+            padding: 1.5rem;
+        }
+        
+        .auth-title {
+            font-size: 1.5rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .button-group .btn {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .form-container {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Animasyonlar */
+    .auth-card {
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-group {
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="auth-shell">
+    <div class="auth-card">
+        <a href="@Url.Action("Giris")" class="auth-back">
+            <i class="fas fa-arrow-left"></i>
+            Geri Dön
+        </a>
+
+        <h1 class="auth-title">Şifre Yenileme</h1>
+        <p class="auth-subtitle">Kayıtlı e-postanızı doğrulayın, ardından yeni parolanızı belirleyin.</p>
+
+        @if (!string.IsNullOrEmpty(errorMsg))
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>@errorMsg
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(successMsg))
+        {
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>@successMsg
+            </div>
+        }
+
+        <div class="form-container">
+            @if (!showPasswordForm)
+            {
+                <!-- E-posta Doğrulama Formu -->
+                <form method="post" asp-action="ParolaHatirlat">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="form-group">
+                        <label for="mail" class="form-label">Kayıtlı E-posta</label>
+                        <input type="email" id="mail" name="mail" class="form-control" placeholder="ornek@mail.com" required />
+                        <small class="text-muted">Hesabınıza bağlı e-posta adresiniz.</small>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check me-2"></i>Doğrula
+                        </button>
+                        <a href="@Url.Action("Giris")" class="btn btn-link">
+                            <i class="fas fa-sign-in-alt me-2"></i>Girişe Dön
+                        </a>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <!-- Parola Sıfırlama Formu -->
+                <form method="post" asp-action="ParolaHatirlat">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="mail" value="@mail" />
+                    
+                    <div class="password-criteria">
+                        <strong><i class="fas fa-shield-alt me-1"></i>Parola Kriterleri:</strong>
+                        <ul>
+                            <li>En az 8 karakter uzunluğunda olmalıdır</li>
+                            <li>En az bir büyük harf içermelidir (A-Z)</li>
+                            <li>En az bir küçük harf içermelidir (a-z)</li>
+                            <li>En az bir rakam içermelidir (0-9)</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword" class="form-label">Yeni Parola</label>
+                        <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="Yeni parolanızı girin" required />
+                        <div id="passwordErrors" class="password-errors" style="display: none;">
+                            <ul id="passwordErrorsList"></ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Parola Tekrar</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Parolanızı tekrar girin" required />
+                        <div id="passwordMatch" class="mt-2"></div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Parolayı Sıfırla
+                        </button>
+                        <a href="@Url.Action("Giris")" class="btn btn-link">
+                            <i class="fas fa-sign-in-alt me-2"></i>Girişe Dön
+                        </a>
+                    </div>
+                </form>
+            }
+        </div>
+
+        <!-- İpucu Bölümü -->
+        <div class="tips-section">
+            <h3 class="tips-title">Güvenlik İpuçları</h3>
+            <ul class="tips-list">
+                <li>Parolanızı kimseyle paylaşmayın.</li>
+                <li>Güvenlik için benzersiz bir parola kullanın.</li>
+                <li>Düzenli olarak parolanızı güncelleyin.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newPasswordInput = document.getElementById('newPassword');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const passwordErrorsDiv = document.getElementById('passwordErrors');
+            const passwordErrorsList = document.getElementById('passwordErrorsList');
+            const passwordMatchDiv = document.getElementById('passwordMatch');
+            
+            if (newPasswordInput) {
+                // Parola kriterleri kontrolü
+                function checkPasswordCriteria(password) {
+                    const errors = [];
+                    
+                    if (password.length < 8) {
+                        errors.push('Şifre en az 8 karakter olmalı.');
+                    }
+                    
+                    if (!/[A-Z]/.test(password)) {
+                        errors.push('Şifre en az bir büyük harf içermeli.');
+                    }
+                    
+                    if (!/[a-z]/.test(password)) {
+                        errors.push('Şifre en az bir küçük harf içermeli.');
+                    }
+                    
+                    if (!/[0-9]/.test(password)) {
+                        errors.push('Şifre en az bir rakam içermeli.');
+                    }
+                    
+                    return errors;
+                }
+                
+                // Parola hatalarını göster
+                function showPasswordErrors(errors) {
+                    if (errors.length > 0) {
+                        passwordErrorsList.innerHTML = '';
+                        errors.forEach(function(error) {
+                            const li = document.createElement('li');
+                            li.textContent = error;
+                            passwordErrorsList.appendChild(li);
+                        });
+                        passwordErrorsDiv.style.display = 'block';
+                    } else {
+                        passwordErrorsDiv.style.display = 'none';
+                    }
+                }
+                
+                // Parola güçlülük kontrolü
+                newPasswordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    const errors = checkPasswordCriteria(password);
+                    
+                    if (password.length === 0) {
+                        passwordErrorsDiv.style.display = 'none';
+                        return;
+                    }
+                    
+                    showPasswordErrors(errors);
+                });
+                
+                // Parola eşleşme kontrolü
+                if (confirmPasswordInput) {
+                    confirmPasswordInput.addEventListener('input', function() {
+                        const password = newPasswordInput.value;
+                        const confirmPassword = this.value;
+                        
+                        if (confirmPassword.length === 0) {
+                            passwordMatchDiv.innerHTML = '';
+                            return;
+                        }
+                        
+                        if (password === confirmPassword) {
+                            passwordMatchDiv.innerHTML = '<small class="text-success"><i class="fas fa-check-circle"></i> Parolalar eşleşiyor</small>';
+                        } else {
+                            passwordMatchDiv.innerHTML = '<small class="text-danger"><i class="fas fa-times-circle"></i> Parolalar eşleşmiyor</small>';
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+}

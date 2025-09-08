@@ -1,0 +1,846 @@
+﻿@model AğızveDişSağlığı.Models.ViewModels.SaglikIndexVm
+
+@{
+    ViewData["Title"] = "Ağız ve Diş Sağlığı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        border: none;
+        padding: 1.5rem;
+    }
+    
+    .nav-tabs {
+        border: none;
+        margin-bottom: 2rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        border-radius: 10px;
+        margin-right: 0.5rem;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        color: #6c757d;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        background: #e9ecef;
+        color: #495057;
+    }
+    
+    .nav-tabs .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn {
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        border: none;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(86, 171, 47, 0.4);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        border: none;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+    }
+    
+    .btn-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        border: none;
+        color: white;
+    }
+    
+    .btn-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+        color: white;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+        border: none;
+        color: white;
+    }
+    
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        color: white;
+    }
+    
+    .suggestion-card {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .status-form, .goal-form {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .card-glass {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .table thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        font-weight: 600;
+        padding: 1rem;
+    }
+    
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-color: #f8f9fa;
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    
+    .period-custom-input {
+        display: none;
+    }
+    
+    .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+    
+    .alert {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .image-preview {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+    
+    .file-input-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .file-input-group .form-control {
+        flex: 1;
+    }
+    
+    .file-input-group .btn {
+        white-space: nowrap;
+    }
+    
+    .file-preview {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .file-preview .file-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .file-preview .file-icon {
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+    
+    .file-preview .file-details {
+        flex: 1;
+    }
+    
+    .file-preview .file-name {
+        font-weight: 500;
+        color: #333;
+        margin: 0;
+    }
+    
+    .file-preview .file-size {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin: 0;
+    }
+    
+    .hidden-file-input {
+        display: none;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header text-center">
+                <h1 class="page-title">
+                    <i class="fas fa-tooth me-3"></i>Ağız ve Diş Sağlığı
+                </h1>
+                <p class="page-subtitle">Sağlık durumunuzu takip edin ve hedeflerinizi yönetin</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Başarı/Hata Mesajları -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Ana İçerik -->
+    <div class="row">
+        <div class="col-12">
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs" id="healthTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button" role="tab" aria-controls="status" aria-selected="true">
+                        <i class="fas fa-chart-line me-2"></i>Durum
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="goals-tab" data-bs-toggle="tab" data-bs-target="#goals" type="button" role="tab" aria-controls="goals" aria-selected="false">
+                        <i class="fas fa-target me-2"></i>Hedefler
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="healthTabsContent">
+                <!-- DURUM SEKMESİ -->
+                <div class="tab-pane fade show active" id="status" role="tabpanel" aria-labelledby="status-tab">
+                    
+                    <!-- Günlük Öneri -->
+                    @if (!string.IsNullOrEmpty(Model.DailySuggestion))
+                    {
+                        <div class="card suggestion-card mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-lightbulb text-warning me-2"></i>Günün Önerisi
+                                </h6>
+                                <p class="card-text">@Model.DailySuggestion</p>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Durum Girişi -->
+                    <div class="card status-form mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-plus-circle me-2"></i>Yeni Durum Kaydet
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="CreateStatus" method="post" enctype="multipart/form-data">
+                                @Html.AntiForgeryToken()
+
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label fw-bold">Hedef Seçin</label>
+                                        <select asp-for="NewStatus.HealthGoalId" class="form-select" required>
+                                            <option value="">Hedef seçin</option>
+                                            @if (Model.Goals != null)
+                                            {
+                                                @foreach (var goal in Model.Goals)
+                                                {
+                                                    <option value="@goal.Id">@goal.Title</option>
+                                                }
+                                            }
+                                        </select>
+                                        <span asp-validation-for="NewStatus.HealthGoalId" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">Tarih</label>
+                                        <input asp-for="NewStatus.Date" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                                        <span asp-validation-for="NewStatus.Date" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">Saat</label>
+                                        <input asp-for="NewStatus.Time" type="time" class="form-control" value="@DateTime.Now.ToString("HH:mm")" required />
+                                        <span asp-validation-for="NewStatus.Time" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">Süre (dk)</label>
+                                        <input asp-for="NewStatus.Duration" type="number" class="form-control" placeholder="Süre" min="1" max="1440" required />
+                                        <span asp-validation-for="NewStatus.Duration" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="col-md-1 d-flex align-items-end">
+                                        <div class="form-check">
+                                            <input name="NewStatus.IsCompleted" class="form-check-input" type="checkbox" value="true" />
+                                            <input type="hidden" name="NewStatus.IsCompleted" value="false" />
+                                            <label class="form-check-label fw-bold">Uygulandı</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-save me-2"></i>Kaydet
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mt-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Açıklama (opsiyonel)</label>
+                                        <textarea asp-for="NewStatus.Description" class="form-control" rows="3" placeholder="Durum hakkında notlar yazın..."></textarea>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Görsel (opsiyonel)</label>
+                                        <div class="file-input-group">
+                                            <input asp-for="NewStatus.ImageUrl" type="url" class="form-control" placeholder="Görsel URL'si (.jpg, .png, .gif)" id="imageUrlInput" />
+                                            <button type="button" class="btn btn-info" onclick="addImageLink()">
+                                                <i class="fas fa-link me-1"></i>URL Ekle
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="file-input-group mt-2">
+                                            <input type="file" id="fileInput" class="form-control hidden-file-input" accept="image/*" onchange="handleFileSelect(event)" />
+                                            <button type="button" class="btn btn-warning" onclick="selectFile()">
+                                                <i class="fas fa-folder-open me-1"></i>Dosya Seç
+                                            </button>
+                                        </div>
+                                        
+                                        <small class="text-muted">Desteklenen formatlar: JPG, PNG, GIF, WEBP</small>
+                                        
+                                        <!-- Görsel Önizleme -->
+                                        <div id="imagePreview" class="mt-2" style="display: none;">
+                                            <img id="previewImg" class="image-preview" alt="Görsel önizleme" />
+                                        </div>
+                                        
+                                        <!-- Dosya Önizleme -->
+                                        <div id="filePreview" class="file-preview mt-2" style="display: none;">
+                                            <div class="file-info">
+                                                <i class="fas fa-file-image file-icon"></i>
+                                                <div class="file-details">
+                                                    <p class="file-name" id="fileName"></p>
+                                                    <p class="file-size" id="fileSize"></p>
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearFile()">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Bağlantı Önizleme -->
+                                        <div id="linkPreview" class="file-preview mt-2" style="display: none;">
+                                            <i class="fas fa-link me-2"></i>
+                                            <a id="previewLink" href="#" target="_blank">Bağlantıyı görüntüle</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Son 7 Günlük Durumlar -->
+                    <div class="card card-glass">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>Son 7 Günlük Durumlar
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Statuses != null && Model.Statuses.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Hedef</th>
+                                                <th>Tarih</th>
+                                                <th>Saat</th>
+                                                <th>Süre</th>
+                                                <th>Durum</th>
+                                                <th>Açıklama</th>
+                                                <th>Görsel</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var status in Model.Statuses)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <span class="badge bg-primary">@(status.HealthGoal?.Title ?? "Bilinmeyen Hedef")</span>
+                                                    </td>
+                                                    <td>@status.Date.ToString("dd.MM.yyyy")</td>
+                                                    <td>@status.Time</td>
+                                                    <td>@status.Duration dk</td>
+                                                    <td>
+                                                        @if (status.IsCompleted)
+                                                        {
+                                                            <span class="badge bg-success">Uygulandı</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-warning">Beklemede</span>
+                                                        }
+                                                    </td>
+                                                    <td>@(status.Description ?? "-")</td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(status.ImageUrl))
+                                                        {
+                                                            @if (IsImageUrl(status.ImageUrl))
+                                                            {
+                                                                <img src="@status.ImageUrl" alt="Durum görseli" class="image-preview" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="@status.ImageUrl" target="_blank" class="btn btn-sm btn-outline-info">
+                                                                    <i class="fas fa-external-link-alt me-1"></i>Bağlantıyı Aç
+                                                                </a>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <form asp-action="DeleteStatus" method="post" class="d-inline" onsubmit="return confirm('Bu durumu silmek istediğinizden emin misiniz?')">
+                                                            <input type="hidden" name="id" value="@status.Id" />
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-5">
+                                    <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Henüz durum kaydı bulunmuyor</h5>
+                                    <p class="text-muted">Yukarıdaki formu kullanarak ilk durumunuzu kaydedin!</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HEDEF SEKMESİ -->
+                <div class="tab-pane fade" id="goals" role="tabpanel" aria-labelledby="goals-tab">
+                    
+                    <!-- Yeni Hedef Oluşturma -->
+                    <div class="card goal-form mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-plus-circle me-2"></i>Yeni Hedef Oluştur
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="CreateGoal" method="post">
+                                @Html.AntiForgeryToken()
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">Hedef Başlığı</label>
+                                        <input name="NewGoal_Title" class="form-control" placeholder="Hedef başlığı girin" required />
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">Açıklama (opsiyonel)</label>
+                                        <textarea name="NewGoal_Description" class="form-control" rows="2" placeholder="Hedef açıklaması girin"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Periyot</label>
+                                        <div class="period-input-group">
+                                            <select id="periodSelect" class="form-select" onchange="togglePeriodInput()">
+                                                <option value="">Seçiniz</option>
+                                                <option value="Günde bir">Günde bir</option>
+                                                <option value="Haftada bir">Haftada bir</option>
+                                                <option value="Ayda bir">Ayda bir</option>
+                                                <option value="Altı ayda bir">Altı ayda bir</option>
+                                                <option value="Yılda bir">Yılda bir</option>
+                                                <option value="custom">Manuel yazım</option>
+                                            </select>
+                                            <input id="periodCustom" name="NewGoal_Period" type="text" class="form-control period-custom-input mt-2" placeholder="Özel periyot girin (örn: 3 günde bir)" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Önem Derecesi</label>
+                                        <select name="NewGoal_Importance" class="form-select">
+                                            <option value="Düşük">Düşük</option>
+                                            <option value="Orta" selected>Orta</option>
+                                            <option value="Yüksek">Yüksek</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="text-end mt-3">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save me-2"></i>Hedefi Kaydet
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Hedef Listesi -->
+                    <div class="card card-glass">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>Hedeflerim
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Goals != null && Model.Goals.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Başlık</th>
+                                                <th>Açıklama</th>
+                                                <th>Periyot</th>
+                                                <th>Önem</th>
+                                                <th>Oluşturulma</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var goal in Model.Goals)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@goal.Title</strong>
+                                                    </td>
+                                                    <td>@(goal.Description ?? "-")</td>
+                                                    <td>
+                                                        <span class="badge bg-info">@goal.Period</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            var importanceClass = goal.Importance switch
+                                                            {
+                                                                "Yüksek" => "bg-danger",
+                                                                "Orta" => "bg-warning",
+                                                                "Düşük" => "bg-success",
+                                                                _ => "bg-secondary"
+                                                            };
+                                                        }
+                                                        <span class="badge @importanceClass">@goal.Importance</span>
+                                                    </td>
+                                                    <td>@goal.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                                    <td>
+                                                        <form asp-action="DeleteGoal" method="post" class="d-inline" onsubmit="return confirmGoalDeletion(@goal.Id, '@goal.Title')">
+                                                            <input type="hidden" name="id" value="@goal.Id" />
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-5">
+                                    <i class="fas fa-target fa-4x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Henüz hedef bulunmuyor</h5>
+                                    <p class="text-muted">Yukarıdaki formu kullanarak ilk hedefinizi oluşturun!</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private bool IsImageUrl(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return false;
+        
+        var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+        var lowerUrl = url.ToLower();
+        
+        return imageExtensions.Any(ext => lowerUrl.Contains(ext));
+    }
+}
+
+@section Scripts {
+    <script>
+        // Periyot input toggle
+        function togglePeriodInput() {
+            const select = document.getElementById('periodSelect');
+            const customInput = document.getElementById('periodCustom');
+            
+            if (select.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.required = true;
+            } else {
+                customInput.style.display = 'none';
+                customInput.required = false;
+                customInput.value = select.value;
+            }
+        }
+
+        // Dosya seçici
+        function selectFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        // Dosya seçildiğinde
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Dosya bilgilerini göster
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = formatFileSize(file.size);
+                document.getElementById('filePreview').style.display = 'block';
+                
+                // Diğer önizlemeleri gizle
+                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('linkPreview').style.display = 'none';
+                
+                // URL input'unu temizle
+                document.getElementById('imageUrlInput').value = '';
+                
+                // Görsel önizleme göster
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.getElementById('previewImg');
+                        img.src = e.target.result;
+                        document.getElementById('imagePreview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Dosyayı temizle
+        function clearFile() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+
+        // Dosya boyutunu formatla
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Görsel önizleme
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            const linkPreview = document.getElementById('linkPreview');
+            const filePreview = document.getElementById('filePreview');
+            
+            if (input.value) {
+                const isImage = isImageUrl(input.value);
+                
+                if (isImage) {
+                    previewImg.src = input.value;
+                    preview.style.display = 'block';
+                    linkPreview.style.display = 'none';
+                    filePreview.style.display = 'none';
+                } else {
+                    const linkElement = document.getElementById('previewLink');
+                    linkElement.href = input.value;
+                    linkElement.textContent = input.value;
+                    linkPreview.style.display = 'block';
+                    preview.style.display = 'none';
+                    filePreview.style.display = 'none';
+                }
+            } else {
+                preview.style.display = 'none';
+                linkPreview.style.display = 'none';
+                filePreview.style.display = 'none';
+            }
+        }
+
+        // URL'nin görsel olup olmadığını kontrol et
+        function isImageUrl(url) {
+            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+            const lowerUrl = url.toLowerCase();
+            return imageExtensions.some(ext => lowerUrl.includes(ext));
+        }
+
+        // Bağlantı ekleme fonksiyonu
+        function addImageLink() {
+            const url = prompt('Bağlantı URL\'sini girin:');
+            if (url && url.trim() !== '') {
+                const input = document.getElementById('imageUrlInput');
+                input.value = url.trim();
+                previewImage(input);
+            }
+        }
+
+        // Hedef silme onayı
+        async function confirmGoalDeletion(goalId, goalTitle) {
+            try {
+                const response = await fetch(`/Saglik/CheckGoalStatuses?goalId=${goalId}`);
+                const data = await response.json();
+                
+                if (data.hasStatuses) {
+                    return confirm(`"${goalTitle}" hedefi için daha önce durum bilgisi eklenmiş. Bu hedefi silmek istediğinizden emin misiniz?\n\nUyarı: Hedef silindiğinde ilgili tüm durum bilgileri de silinecektir!`);
+                } else {
+                    return confirm(`"${goalTitle}" hedefini silmek istediğinizden emin misiniz?`);
+                }
+            } catch (error) {
+                console.error('Hedef durumu kontrol edilirken hata:', error);
+                return confirm(`"${goalTitle}" hedefini silmek istediğinizden emin misiniz?`);
+            }
+        }
+
+        // Sayfa yüklendiğinde periyot input'u gizle
+        document.addEventListener('DOMContentLoaded', function() {
+            togglePeriodInput();
+            
+            // Görsel URL input'u için event listener
+            const imageInput = document.getElementById('imageUrlInput');
+            if (imageInput) {
+                imageInput.addEventListener('input', function() {
+                    previewImage(this);
+                });
+            }
+        });
+
+        // Tab yönlendirme
+        document.addEventListener('DOMContentLoaded', function() {
+            const activeTab = '@TempData["ActiveTab"]';
+            if (activeTab) {
+                const tab = document.getElementById(activeTab + '-tab');
+                if (tab) {
+                    tab.click();
+                }
+            }
+        });
+    </script>
+}

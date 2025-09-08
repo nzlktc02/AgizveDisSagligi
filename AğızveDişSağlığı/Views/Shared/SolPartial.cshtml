@@ -1,0 +1,103 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Ağız & Diş</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #ffe0ec 0%, #fecdd3 40%, #f9a8d4 80%);
+            background-attachment: fixed;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #fff;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            padding: 1.75rem 1rem;
+            gap: .5rem;
+        }
+
+            .sidebar a {
+                display: flex;
+                align-items: center;
+                gap: .5rem;
+                padding: .55rem .75rem;
+                border-radius: .5rem;
+                color: #1f2937;
+                text-decoration: none;
+                font-weight: 500;
+                transition: background .2s ease;
+            }
+
+                .sidebar a:hover {
+                    background: #fdf2f8;
+                }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .4rem;
+            margin-top: 1rem;
+            border: none;
+            padding: .6rem .9rem;
+            border-radius: .5rem;
+            background: #fee2e2;
+            font-weight: 600;
+            width: 100%;
+            transition: background .2s ease;
+        }
+
+            .logout-btn:hover {
+                background: #fecaca;
+            }
+
+        .content {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sol Sidebar -->
+    <div class="sidebar">
+        <h4>🦷 Ağız & Diş</h4>
+
+        <a asp-controller="AnaSayfa" asp-action="Index">🏠 Ana Sayfa</a>
+        <a asp-controller="Hesap" asp-action="Profil">👤 Profil</a>
+        <a asp-controller="Saglik" asp-action="Index">🦷 Ağız ve Diş Sağlığım</a>
+        <a asp-controller="Oneri" asp-action="Index">💡 Diş Sağlığı Önerisi</a>
+
+        <form asp-controller="Hesap" asp-action="Cikis" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="logout-btn">
+                🔓 Çıkış Yap
+            </button>
+        </form>
+    </div>
+
+    <!-- Sayfa içeriği -->
+    <main class="content container">
+        @RenderBody()
+        @RenderSection("Scripts", required: false)
+    </main>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

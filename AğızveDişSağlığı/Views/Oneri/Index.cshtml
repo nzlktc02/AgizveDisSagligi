@@ -1,0 +1,56 @@
+﻿@model IReadOnlyList<AğızveDişSağlığı.Models.OneriItem>
+@{
+    ViewData["Title"] = "Diş Sağlığı Önerileri";
+    Layout = "~/Views/Shared/_Layout.cshtml";   // Sidebar’lı layout
+    var q = ViewBag.Query as string;
+}
+<style>
+    .card-glass {
+        background: #ffffffee;
+        backdrop-filter: saturate(140%) blur(6px);
+        border: 1px solid rgba(236,72,153,.12);
+        border-radius: 20px;
+        box-shadow: 0 18px 48px rgba(236,72,153,.18);
+    }
+</style>
+
+<div class="card-glass p-4 p-lg-5">
+    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+        <h3 class="mb-0">Diş Sağlığı Önerileri</h3>
+        <form method="get" class="d-flex gap-2">
+            <input name="q" value="@q" class="form-control" placeholder="Öneride ara..." />
+            <button class="btn btn-primary">Ara</button>
+            @if (!string.IsNullOrWhiteSpace(q))
+            {
+                <a class="btn btn-outline-secondary" href="@Url.Action("Index", "Oneri")">Temizle</a>
+            }
+        </form>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-warning">Kriterinize uygun öneri bulunamadı.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th style="width:80px">#</th>
+                        <th>Öneri</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>@o.Id</td>
+                            <td>@o.Metin</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

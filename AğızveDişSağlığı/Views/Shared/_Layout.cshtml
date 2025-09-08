@@ -1,0 +1,97 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ağız ve Diş Sağlığı</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #ffe0ec 0%, #fecdd3 40%, #f9a8d4 80%);
+            background-attachment: fixed;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: #fff;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem;
+        }
+
+            .sidebar h4 {
+                text-align: center;
+                font-weight: 800;
+                color: #ec4899;
+                margin-bottom: 2rem;
+            }
+
+        .nav-link {
+            color: #ec4899;
+            font-weight: 500;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            transition: all 0.2s ease-in-out;
+        }
+
+            .nav-link:hover {
+                background: #fce7f3;
+                text-decoration: none;
+            }
+
+            .nav-link.active {
+                background: #ec4899;
+                color: white !important;
+            }
+
+        /* İçerik */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        /* Çıkış butonu */
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.1);
+            border: none;
+            color: #dc3545;
+            font-weight: 600;
+            border-radius: 8px;
+            margin-top: auto;
+            padding: 0.6rem;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            .logout-btn:hover {
+                background: rgba(220, 53, 69, 0.2);
+            }
+    </style>
+    
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+  @*   @await Html.PartialAsync("SolPartial.cshtml") *@
+
+    <!-- Sağ İçerik Alanı -->
+    <div class="content-area">
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

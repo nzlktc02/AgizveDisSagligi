@@ -1,0 +1,486 @@
+﻿@model AğızveDişSağlığı.Models.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Profil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        /* Ortalanmış sayfa kabuğu */
+        .profile-shell {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Başlık */
+        .profile-title {
+            text-align: center;
+            color: #ec4899;
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Form grupları */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+            outline: none;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .form-control.is-valid {
+            border-color: #28a745;
+        }
+
+        /* Butonlar */
+        .btn-primary {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Avatar */
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3rem;
+            color: white;
+        }
+
+        /* Başarı mesajları */
+        .alert-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Hata mesajları */
+        .alert-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Parola değiştirme bölümü */
+        .password-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 2px solid #e9ecef;
+        }
+
+        .password-section h5 {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .password-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .password-criteria {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            color: #0066cc;
+            font-size: 0.9rem;
+        }
+
+        .password-criteria ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .password-criteria li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Parola hata mesajları */
+        .password-errors {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            color: #721c24;
+            font-size: 0.9rem;
+        }
+
+        .password-errors ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .password-errors li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .profile-shell {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .profile-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+}
+
+<div class="profile-shell">
+    <h1 class="profile-title"> Profil Bilgileri</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+        </div>
+    }
+
+    <form asp-action="Profil" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="avatar-section">
+            <div class="avatar">
+                @if (!string.IsNullOrEmpty(Model.Ad))
+                {
+                    @Model.Ad.Substring(0, 1).ToUpper()
+                }
+                else
+                {
+                    <i class="fas fa-user"></i>
+                }
+            </div>
+            <p class="text-muted">Profil Fotoğrafı</p>
+        </div>
+
+        <!-- Temel Bilgiler -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Ad" class="form-label">Ad *</label>
+                    <input asp-for="Ad" class="form-control" placeholder="Adınızı girin" required />
+                    <span asp-validation-for="Ad" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Soyad" class="form-label">Soyad *</label>
+                    <input asp-for="Soyad" class="form-control" placeholder="Soyadınızı girin" required />
+                    <span asp-validation-for="Soyad" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Mail" class="form-label">E-posta Adresi *</label>
+            <input asp-for="Mail" type="email" class="form-control" placeholder="E-posta adresinizi girin" required />
+            <span asp-validation-for="Mail" class="text-danger"></span>
+            <small class="text-muted">E-posta adresiniz giriş yapmak için kullanılır.</small>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="DogumTarihi" class="form-label">Doğum Tarihi</label>
+            <input asp-for="DogumTarihi" type="date" class="form-control" />
+            <span asp-validation-for="DogumTarihi" class="text-danger"></span>
+        </div>
+
+        <!-- Parola Değiştirme Bölümü -->
+        <div class="password-section">
+            <h5><i class="fas fa-key me-2"></i>Parola Değiştir</h5>
+            <div class="password-note">
+                <i class="fas fa-info-circle me-1"></i>
+                Parolanızı değiştirmek istemiyorsanız aşağıdaki alanları boş bırakın.
+            </div>
+            
+            <div class="password-criteria">
+                <strong><i class="fas fa-shield-alt me-1"></i>Parola Kriterleri:</strong>
+                <ul>
+                    <li>En az 8 karakter uzunluğunda olmalıdır</li>
+                    <li>En az bir büyük harf içermelidir (A-Z)</li>
+                    <li>En az bir küçük harf içermelidir (a-z)</li>
+                    <li>En az bir rakam içermelidir (0-9)</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MevcutParola" class="form-label">Mevcut Parola</label>
+                <input asp-for="MevcutParola" type="password" class="form-control" placeholder="Mevcut parolanızı girin" />
+                <span asp-validation-for="MevcutParola" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="YeniParola" class="form-label">Yeni Parola</label>
+                        <input asp-for="YeniParola" type="password" class="form-control" placeholder="Yeni parolanızı girin" id="newPassword" />
+                        <span asp-validation-for="YeniParola" class="text-danger"></span>
+                        <div id="passwordErrors" class="password-errors" style="display: none;">
+                            <ul id="passwordErrorsList"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="YeniParolaTekrar" class="form-label">Yeni Parola Tekrar</label>
+                        <input asp-for="YeniParolaTekrar" type="password" class="form-control" placeholder="Yeni parolanızı tekrar girin" id="confirmPassword" />
+                        <span asp-validation-for="YeniParolaTekrar" class="text-danger"></span>
+                        <div id="passwordMatch" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary me-3">
+                <i class="fas fa-save me-2"></i>Kaydet
+            </button>
+            <a asp-controller="AnaSayfa" asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const newPasswordInput = document.getElementById('newPassword');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const passwordErrorsDiv = document.getElementById('passwordErrors');
+            const passwordErrorsList = document.getElementById('passwordErrorsList');
+            const passwordMatchDiv = document.getElementById('passwordMatch');
+            
+            // Parola kriterleri kontrolü
+            function checkPasswordCriteria(password) {
+                const errors = [];
+                
+                if (password.length < 8) {
+                    errors.push('Şifre en az 8 karakter olmalı.');
+                }
+                
+                if (!/[A-Z]/.test(password)) {
+                    errors.push('Şifre en az bir büyük harf içermeli.');
+                }
+                
+                if (!/[a-z]/.test(password)) {
+                    errors.push('Şifre en az bir küçük harf içermeli.');
+                }
+                
+                if (!/[0-9]/.test(password)) {
+                    errors.push('Şifre en az bir rakam içermeli.');
+                }
+                
+                return errors;
+            }
+            
+            // Parola hatalarını göster
+            function showPasswordErrors(errors) {
+                if (errors.length > 0) {
+                    passwordErrorsList.innerHTML = '';
+                    errors.forEach(function(error) {
+                        const li = document.createElement('li');
+                        li.textContent = error;
+                        passwordErrorsList.appendChild(li);
+                    });
+                    passwordErrorsDiv.style.display = 'block';
+                } else {
+                    passwordErrorsDiv.style.display = 'none';
+                }
+            }
+            
+            // Parola güçlülük kontrolü
+            newPasswordInput.addEventListener('input', function() {
+                const password = this.value;
+                const errors = checkPasswordCriteria(password);
+                
+                if (password.length === 0) {
+                    passwordErrorsDiv.style.display = 'none';
+                    return;
+                }
+                
+                showPasswordErrors(errors);
+            });
+            
+            // Parola eşleşme kontrolü
+            confirmPasswordInput.addEventListener('input', function() {
+                const password = newPasswordInput.value;
+                const confirmPassword = this.value;
+                
+                if (confirmPassword.length === 0) {
+                    passwordMatchDiv.innerHTML = '';
+                    return;
+                }
+                
+                if (password === confirmPassword) {
+                    passwordMatchDiv.innerHTML = '<small class="text-success"><i class="fas fa-check-circle"></i> Parolalar eşleşiyor</small>';
+                } else {
+                    passwordMatchDiv.innerHTML = '<small class="text-danger"><i class="fas fa-times-circle"></i> Parolalar eşleşmiyor</small>';
+                }
+            });
+            
+            form.addEventListener('submit', function(e) {
+                // Temel alanların dolu olup olmadığını kontrol et
+                const requiredFields = ['Ad', 'Soyad', 'Mail'];
+                let hasError = false;
+                
+                requiredFields.forEach(function(fieldName) {
+                    const field = document.querySelector(`[name="${fieldName}"]`);
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        hasError = true;
+                    } else {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                    }
+                });
+                
+                // E-posta format kontrolü
+                const emailField = document.querySelector('[name="Mail"]');
+                const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                if (emailField.value && !emailRegex.test(emailField.value)) {
+                    emailField.classList.add('is-invalid');
+                    hasError = true;
+                }
+                
+                // Parola değiştirme alanları kontrolü
+                const newPassword = document.querySelector('[name="YeniParola"]').value;
+                const newPasswordRepeat = document.querySelector('[name="YeniParolaTekrar"]').value;
+                const currentPassword = document.querySelector('[name="MevcutParola"]').value;
+                
+                if (newPassword || newPasswordRepeat || currentPassword) {
+                    // Eğer parola değiştirme alanlarından biri doluysa hepsi dolu olmalı
+                    if (!newPassword || !newPasswordRepeat || !currentPassword) {
+                        alert('Parola değiştirmek için tüm parola alanlarını doldurun.');
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    // Yeni parola kriterleri kontrolü
+                    const errors = checkPasswordCriteria(newPassword);
+                    if (errors.length > 0) {
+                        showPasswordErrors(errors);
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    // Parola eşleşme kontrolü
+                    if (newPassword !== newPasswordRepeat) {
+                        alert('Yeni parolalar uyuşmuyor.');
+                        e.preventDefault();
+                        return;
+                    }
+                }
+                
+                if (hasError) {
+                    e.preventDefault();
+                    alert('Lütfen tüm gerekli alanları doldurun.');
+                }
+            });
+        });
+    </script>
+}
